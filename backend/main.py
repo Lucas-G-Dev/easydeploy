@@ -84,24 +84,20 @@ async def index(request: Request):
 
 @app.get("/api/projects")
 async def list_projects():
-    data = await trpc_query("projects.listProjects")
-    return data
+    try:
+        data = await trpc_query("projects.listProjects")
+        return {
+            "ok": True,
+            "data": data.get("json", [])
+        }
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=str(e))
 
 
 @app.get("/api/services")
 async def list_all_services():
-    try:
-        projects_data = await trpc_query("projects.listProjects")
-        projects = projects_data.get("result", {}).get("data", {}).get("json", [])
-        services = []
-        for proj in projects:
-            proj_name = proj.get("name", "")
-            for svc in proj.get("services", []):
-                svc["_project"] = proj_name
-                services.append(svc)
-        return {"ok": True, "data": services}
-    except Exception as e:
-        raise HTTPException(status_code=502, detail=str(e))
+    data = await trpc_query("projects.listProjects")
+    return data
 
 
 class DeployRequest(BaseModel):
