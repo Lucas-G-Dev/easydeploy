@@ -96,7 +96,7 @@ async def list_projects():
 
 @app.get("/api/services")
 async def list_all_services():
-    data = await trpc_query("services.listServices")
+    data = await trpc_query("projects.listProjects")
     return data
 
 @app.get("/api/debug")
