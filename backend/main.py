@@ -89,35 +89,15 @@ async def list_projects():
 
 @app.get("/api/services")
 async def list_all_services():
-    """
-    O Easypanel não retorna os serviços junto da lista de projetos.
-    projects.listProjects só traz nome/metadados do projeto.
-    Os serviços de cada projeto vêm de uma chamada separada:
-    projects.inspectProject, uma por projeto.
-    """
     try:
         projects_data = await trpc_query("projects.listProjects")
         projects = projects_data.get("result", {}).get("data", {}).get("json", [])
-
-        async def fetch_project_services(proj):
-            proj_name = proj.get("name", "")
-            try:
-                detail = await trpc_query("projects.inspectProject", {"projectName": proj_name})
-                proj_detail = detail.get("result", {}).get("data", {}).get("json", {})
-            except Exception:
-                proj_detail = {}
-            svc_list = proj_detail.get("services", []) or proj.get("services", [])
-            result = []
-            for svc in svc_list:
-                svc["_project"] = proj_name
-                result.append(svc)
-            return result
-
-        results = await asyncio.gather(*[fetch_project_services(p) for p in projects])
         services = []
-        for r in results:
-            services.extend(r)
-
+        for proj in projects:
+            proj_name = proj.get("name", "")
+            for svc in proj.get("services", []):
+                svc["_project"] = proj_name
+                services.append(svc)
         return {"ok": True, "data": services}
     except Exception as e:
         raise HTTPException(status_code=502, detail=str(e))
