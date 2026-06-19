@@ -1,0 +1,9 @@
+services:
+  easydeploy:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - EASYPANEL_URL=${EASYPANEL_URL}
+      - EASYPANEL_TOKEN=${EASYPANEL_TOKEN}
+    restart: unless-stopped
