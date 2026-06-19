@@ -84,11 +84,8 @@ async def index(request: Request):
 
 @app.get("/api/projects")
 async def list_projects():
-    try:
-        data = await trpc_query("projects.listProjects")
-        return {"ok": True, "data": data.get("result", {}).get("data", {}).get("json", [])}
-    except Exception as e:
-        raise HTTPException(status_code=502, detail=str(e))
+    data = await trpc_query("projects.listProjects")
+    return data
 
 
 @app.get("/api/services")
