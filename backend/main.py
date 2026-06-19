@@ -99,7 +99,10 @@ async def list_all_services():
     data = await trpc_query("projects.listProjects")
     return data
 
-
+@app.get("/api/debug")
+async def debug():
+    return await trpc_query("services.listServices")
+    
 class DeployRequest(BaseModel):
     projectName: str
     serviceName: str
