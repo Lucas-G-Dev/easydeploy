@@ -30,7 +30,7 @@ def log_action(action: str, service: str, status: str = "ok", detail: str = ""):
 def ep_headers():
     return {
         "Content-Type": "application/json",
-        "Authorization": f"Bearer {EASYPANEL_TOKEN}",
+        "Authorization": EASYPANEL_TOKEN,
     }
 
 async def trpc_query(procedure: str, input_data: dict = None):
